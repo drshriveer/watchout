@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title> watch the ƒ out</title>
-    <link href="special.css" rel="stylesheet" type="text/css">
+    <link href="styles.css" rel="stylesheet" type="text/css">
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   </head>
   <body>
@@ -15,11 +15,31 @@
           <!--  keep the score here!  -->
         </div>
       </header>
-        <svg class="gameArea">
-          <circle cx="60" cy="60" r="50"/>
-        </svg>
+      <div class="gameArea"></div>
     </div>
     <script>
+      var circleData = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+      var svgContainer = d3.select(".gameArea").append("svg")
+                                               .attr("width", 500)
+                                               .attr("height", 500)
+                                               .attr("background-color", "#99A");
+
+      var circles = svgContainer.selectAll("circle")
+                                .data(circleData)
+                                .enter()
+                                .append("circle");
+
+      var setCircleLocation = function(circ){
+        return circ
+                  .attr("cy", function(){ return Math.floor(Math.random()*500); })
+                  .attr("cx", function(){ return Math.floor(Math.random()*500); })
+                  .attr("r", 10)
+                  .style("fill", "blue");
+      }
+
+
+      setInterval(function(){setCircleLocation(circles);},1000);
 
     </script>
   </body>
