@@ -18,13 +18,14 @@
       <div class="gameArea"></div>
     </div>
     <script>
+      var score = 0;
       var circleData = [];
       var circleRadius = 10;
       var boxSize = 500; //px
       var timeDelay = 2000; //ms
       var numOfEnemies = 10;
-      var circleTemplate = {"x_val": 0,
-                            "y_val": 0,
+      var circleTemplate = {"x_val": boxSize/2,
+                            "y_val": boxSize/2+50,
                             "radius": 10,
                             "color": 'black'};
 
@@ -42,22 +43,33 @@
                                 .enter()
                                 .append("circle");
 
-      var updateEnemyData = function(en){
-        var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
-        en.each(function(d){
-          d.y_val = Math.floor(Math.random()*boxSize);
-          d.x_val = Math.floor(Math.random()*boxSize);
-          d.color = randColor;
-        });
+
+      // var updateEnemyData = function(en){
+      //   var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
+      //   return en.each(function(d){
+      //     d.y_val = genRand();
+      //     d.x_val = genRand();
+      //     d.color = randColor;
+      //   });
+      // };
+
+      var genRandPosition = function(){
+        return Math.floor(Math.random()*boxSize);
       };
 
-      var refreshEnemy = function(en){
+      var refreshEnemy = function(en) {
+        var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
         return en.transition()
                  .duration(timeDelay)
-                 .attr("cy", function(d){return d.y_val;})
-                 .attr("cx", function(d){return d.x_val;})
-                 .style("fill", function(d){return d.color;});
+                 .attr("cy", function(d){d.y_val = genRandPosition(); return d.y_val;})
+                 .attr("cx", function(d){d.x_val = genRandPosition(); return d.x_val;})
+                 .attr("r", function(d){return d.radius;})
+                 .style("fill", randColor);
       };
+
+      var updateScore = function(player, en){
+        console.log(d3.select("circle").attr("cy"));
+      }
 
       var drag = d3.behavior.drag()
                             .on("drag", function(d, i){
@@ -72,11 +84,8 @@
                                .style("fill", "orange")
                                .call(drag);
 
-      player.on("drag", function(e){
-        console.log(e);
-      });
-
-      var setIntervalID = setInterval(function(){updateEnemyData(enemies); refreshEnemy(enemies);},timeDelay);
+      var setIntervalID2 = setInterval(updateScore, 150);
+      var setIntervalID = setInterval(function(){refreshEnemy(enemies);},timeDelay);
     </script>
   </body>
 </html>
