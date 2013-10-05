@@ -18,31 +18,65 @@
       <div class="gameArea"></div>
     </div>
     <script>
-      var circleData = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+      var circleData = [];
+      var circleRadius = 10;
+      var boxSize = 500; //px
+      var timeDelay = 2000; //ms
+      var numOfEnemies = 10;
+      var circleTemplate = {"x_val": 0,
+                            "y_val": 0,
+                            "radius": 10,
+                            "color": 'black'};
+
+      for(var i = 0; i < numOfEnemies; i++){
+        circleData.push(circleTemplate);
+      }
 
       var svgContainer = d3.select(".gameArea").append("svg")
-                                               .attr("width", 500)
-                                               .attr("height", 500)
+                                               .attr("width", boxSize)
+                                               .attr("height", boxSize)
                                                .attr("background-color", "#99A");
 
-      var circles = svgContainer.selectAll("circle")
+      var enemies = svgContainer.selectAll("circle")
                                 .data(circleData)
                                 .enter()
                                 .append("circle");
 
-      var setCircleLocation = function(circ){
-        return circ
-                  .transition()
-                  .duration(1000) 
-                  .attr("cy", function(){ return Math.floor(Math.random()*500); })
-                  .attr("cx", function(){ return Math.floor(Math.random()*500); })
-                  .attr("r", 10)
-                  .style("fill", "blue");
-      }
+      var updateEnemyData = function(en){
+        var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
+        en.each(function(d){
+          d.y_val = Math.floor(Math.random()*boxSize);
+          d.x_val = Math.floor(Math.random()*boxSize);
+          d.color = randColor;
+        });
+      };
 
+      var refreshEnemy = function(en){
+        return en.transition()
+                 .duration(timeDelay)
+                 .attr("cy", function(d){return d.y_val;})
+                 .attr("cx", function(d){return d.x_val;})
+                 .style("fill", function(d){return d.color;});
+      };
 
-      setInterval(function(){setCircleLocation(circles);},2000);
+      var drag = d3.behavior.drag()
+                            .on("drag", function(d, i){
+                              d3.select(this).attr("cy", d3.event.y)
+                                    .attr("cx", d3.event.x);
+                            });
 
+      var player = svgContainer.append("circle")
+                               .attr("cy", boxSize/2)
+                               .attr("cx", boxSize/2)
+                               .attr("r", circleRadius)
+                               .style("fill", "orange")
+                               .call(drag);
+
+      player.on("drag", function(e){
+        console.log(e);
+      });
+
+      var setIntervalID = setInterval(function(){updateEnemyData(enemies); refreshEnemy(enemies);},timeDelay);
     </script>
   </body>
 </html>
