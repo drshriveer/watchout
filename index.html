@@ -44,15 +44,6 @@
                                 .append("circle");
 
 
-      // var updateEnemyData = function(en){
-      //   var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
-      //   return en.each(function(d){
-      //     d.y_val = genRand();
-      //     d.x_val = genRand();
-      //     d.color = randColor;
-      //   });
-      // };
-
       var genRandPosition = function(){
         return Math.floor(Math.random()*boxSize);
       };
@@ -65,6 +56,18 @@
                  .attr("cx", function(d){d.x_val = genRandPosition(); return d.x_val;})
                  .attr("r", function(d){return d.radius;})
                  .style("fill", randColor);
+      };
+
+
+      //custom tween funciton:???
+      // check for colision. 
+      // then do everything a normal transion will do, plus flips
+
+      var checkCollision = function(x,y){
+        var dy = player.attr('cy') - y;
+        var dx = player.attr('cx') - x;
+        var distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        if(distance < player.attr('r')*2){ resetscores() };
       };
 
       var updateScore = function(player, en){
