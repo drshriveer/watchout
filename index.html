@@ -50,30 +50,49 @@
 
       var refreshEnemy = function(en) {
         var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
+
         return en.transition()
                  .duration(timeDelay)
                  .attr("cy", function(d){d.y_val = genRandPosition(); return d.y_val;})
                  .attr("cx", function(d){d.x_val = genRandPosition(); return d.x_val;})
                  .attr("r", function(d){return d.radius;})
-                 .style("fill", randColor);
+                 .style("fill", randColor)
+                 .tween('custom', customTween);
       };
 
 
       //custom tween funciton:???
       // check for colision. 
       // then do everything a normal transion will do, plus flips
-
-      var checkCollision = function(x,y){
-        var dy = player.attr('cy') - y;
-        var dx = player.attr('cx') - x;
-        var distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-        if(distance < player.attr('r')*2){ resetscores() };
+      var customTween = function(d){
+        var startX, startY, endX, endY, enemy;
+        enemy = d3.select(this);
+        startX = parseFloat(enemy.attr('cx'))|| 0;
+        startY = parseFloat(enemy.attr('cy')) || 0;
+        endX = d.x_val;
+        endY = d.y_val;
+        return function(t){
+          checkCollision(parseFloat(enemy.attr('cx')),parseFloat(enemy.attr('cy')));
+          var nextX = startX + (endX - startX)*t;
+          var nextY = startY + (endY - startY)*t;
+          return enemy.attr('cx', nextX).attr('cy', nextY);
+        };//equation with time!
       };
 
-      var updateScore = function(player, en){
-        console.log(d3.select("circle").attr("cy"));
-      }
 
+      var checkCollision = function(x,y){
+        var dy = parseFloat(player.attr('cy')) - y;
+        var dx = parseFloat(player.attr('cx')) - x;
+        var distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        if(distance < player.attr('r')*2){ resetscores(); }
+      };
+
+      //to reset scores
+      var resetscores = function(){
+        console.log("don't touch me!");
+        //move current score to high score if applicable.
+        //set current score to zero
+      };
       var drag = d3.behavior.drag()
                             .on("drag", function(d, i){
                               d3.select(this).attr("cy", d3.event.y)
@@ -87,7 +106,6 @@
                                .style("fill", "orange")
                                .call(drag);
 
-      var setIntervalID2 = setInterval(updateScore, 150);
       var setIntervalID = setInterval(function(){refreshEnemy(enemies);},timeDelay);
     </script>
   </body>
