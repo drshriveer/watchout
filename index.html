@@ -9,16 +9,20 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1> Yo!! </h1>
-        <h2> don't die! </h2>
+        <div class="title">
+          <h1> Yo!! </h1>
+          <h2> don't die! </h2>
+        </div>
         <div class="scoreboard">
-          <!--  keep the score here!  -->
+          Score: <span class="score">0</span>
+          <br>Highest Score: <span class="highestScore">0</span>
         </div>
       </header>
       <div class="gameArea"></div>
     </div>
     <script>
       var score = 0;
+      var highestScore = 0;
       var circleData = [];
       var circleRadius = 10;
       var boxSize = 500; //px
@@ -51,6 +55,8 @@
       var refreshEnemy = function(en) {
         var randColor = "#"+ Math.floor(Math.random()*7) + Math.floor(Math.random()*7) + Math.floor(Math.random()*7);
 
+        updateScores();
+
         return en.transition()
                  .duration(timeDelay)
                  .attr("cy", function(d){d.y_val = genRandPosition(); return d.y_val;})
@@ -67,7 +73,7 @@
       var customTween = function(d){
         var startX, startY, endX, endY, enemy;
         enemy = d3.select(this);
-        startX = parseFloat(enemy.attr('cx'))|| 0;
+        startX = parseFloat(enemy.attr('cx')) || 0;
         startY = parseFloat(enemy.attr('cy')) || 0;
         endX = d.x_val;
         endY = d.y_val;
@@ -84,19 +90,21 @@
         var dy = parseFloat(player.attr('cy')) - y;
         var dx = parseFloat(player.attr('cx')) - x;
         var distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-        if(distance < player.attr('r')*2){ resetscores(); }
+        if(distance < player.attr('r')*2){ score = 0; }
       };
 
-      //to reset scores
-      var resetscores = function(){
-        console.log("don't touch me!");
-        //move current score to high score if applicable.
-        //set current score to zero
+      //to update scores
+      var updateScores = function(){
+        score++;
+        highestScore = (score > highestScore) ? score : highestScore;
+        d3.select('.score').text(score);
+        d3.select('.highestScore').text(highestScore);
       };
+
       var drag = d3.behavior.drag()
                             .on("drag", function(d, i){
                               d3.select(this).attr("cy", d3.event.y)
-                                    .attr("cx", d3.event.x);
+                                             .attr("cx", d3.event.x);
                             });
 
       var player = svgContainer.append("circle")

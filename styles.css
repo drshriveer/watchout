@@ -4,7 +4,27 @@ body{
 }
 
 .gameArea{
+  clear: both;
   background-color: #aac;
   width: 500px;
   height: 500px;
+}
+
+header{
+  display: inline;
+}
+
+.scoreboard{
+  display: inline-block;
+  font-size: 1.5em;
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: right;
+}
+
+.title{
+  width: 350px;
+  display: inline-block;
+  margin-top: auto;
+  margin-bottom: auto;
 }
